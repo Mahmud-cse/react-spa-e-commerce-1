@@ -12,7 +12,7 @@ const Shop = () => {
 
     // Data fetch from local JSON file
     useEffect(()=>{
-        fetch('./products.JSON')
+        fetch('./products.json')
         .then(res=>res.json())
         .then(data=>{
             setProducts(data);
