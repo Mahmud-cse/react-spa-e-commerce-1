@@ -8,19 +8,26 @@ import { Link } from 'react-router-dom';
 const Shop = () => {
     const [products,setProducts]=useState([]);
     const [cart,setCart]=useState([]);
+    const [page,setPage]=useState(0);
+    const [pageCount,setPageCount]=useState(0);  
     const [displayProducts,setDisplayProducts]=useState([]);
-
+    const size=10;
     // Data fetch from local JSON file
     useEffect(()=>{
-        fetch('./products.json')
+        fetch(`http://localhost:5000/products?page=${page}&&size=${size}`)
         .then(res=>res.json())
         .then(data=>{
-            setProducts(data);
+            setProducts(data.products);
 
             // display product optionally
-            setDisplayProducts(data);
+            setDisplayProducts(data.products);
+
+            // pagination
+            const count=data.count;
+            const pageNumber=Math.ceil(count/size);
+            setPageCount(pageNumber);
         });
-    },[]);
+    },[page]);
 
     // Used to display in UI from local storage
     useEffect(()=>{
@@ -70,6 +77,15 @@ const Shop = () => {
                 {
                     displayProducts.map(product=><Product key={product.key} product={product} handleAddToCart={handleAddToCart}></Product>)
                 }
+                <div className="pagination">
+                {   
+                 [...Array(pageCount).keys()].map(number=><button
+                    key={number}
+                    onClick={()=>setPage(number)}
+                    className={number===page?'selected':''}
+                 >{number+1}</button>)
+                }
+                </div>
             </div>
             {/* cart component */}
             <div className="cart-container">
